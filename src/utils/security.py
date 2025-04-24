@@ -1,8 +1,8 @@
 from src.database.postgres import get_connection
 import bcrypt, re
 
-def convert_bcrypt(password_entered):
-    hashed_password = bcrypt.hashpw(password_entered.encode('utf-8'), bcrypt.gensalt())
+def convert_bcrypt(password):
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
     return hashed_password.decode()
 
 def validate_password(password_entered, password_recovered):
