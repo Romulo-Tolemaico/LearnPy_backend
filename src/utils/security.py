@@ -1,8 +1,12 @@
 from src.database.postgres import get_connection
-import hashlib, re
+import bcrypt, re
 
-def convert_sha_512(password):
-    return hashlib.sha512(password.encode()).hexdigest()
+def convert_bcrypt(password_entered):
+    hashed_password = bcrypt.hashpw(password_entered.encode('utf-8'), bcrypt.gensalt())
+    return hashed_password.decode()
+
+def validate_password(password_entered, password_recovered):
+    return bcrypt.checkpw(password_entered.encode('utf-8'), password_recovered.encode('utf-8'))
 
 def is_password_secure(password):
     pattern = r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&+=!]).{8,}$'
