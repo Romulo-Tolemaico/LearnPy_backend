@@ -20,8 +20,7 @@ def login():
 @main.route('/get_users', methods=['POST'])
 def get_users():
     try:
-        type = int(request.json['type'])   
-             
+        type = int(request.json['type'])
         users, resp = User.get_users(type)
         return jsonify(users), resp
     except Exception as ex:

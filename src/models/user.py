@@ -173,7 +173,7 @@ class User():
             db.close()
 
     @classmethod
-    def edit_user(cls, user_code: int, name: str, email: str, password: str, type_user_code: int):
+    def edit_user(self, user_code: int, name: str, email: str, password: str, type_user_code: int):
         try:
             
             invalidations = [is_password_secure(password), is_valid_name(name), is_valid_email(email), email_exists(email)]
