@@ -121,7 +121,6 @@ Body JSON:
   "code": 123,
   "name": "Juan Pérez",
   "email": "juan@ejemplo.com",
-  "password": "654321",
   "type": 3
 }
 ```
