@@ -14,9 +14,17 @@
 
 ## Endpoints
 
+## Dominios
+
+```
+Dominio local: http://127.0.0.1:5000/
+
+Dominio global: 
+```
+
 ### Login de usuario
 
-URL: /login_user    
+URL: /login 
 Método: POST  
 Body JSON: 
 ```json

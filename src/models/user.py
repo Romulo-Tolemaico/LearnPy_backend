@@ -8,29 +8,19 @@ class User():
         try:
             db = get_connection()
             cursor = db.cursor()
-
             cursor.execute('''
                 SELECT user_code, user_password
                 FROM get_login_data(%s, %s);
             ''', (email, type))
-
             result = cursor.fetchone()
-
             if result is None:
                 return {"message": "User not found"}, 401
-
             code, password_recovered = result
-
-            password_entered = convert_bcrypt(password)
-
-            if not validate_password(password_entered, password_recovered):
+            if not validate_password(password, password_recovered):
                 return {"message": "Incorrect password"}, 401
-
             return {"user_code": code}, 200
-
         except Exception as ex:
             return {"error": f"login error: {str(ex)}"}, 500
-
         finally:
             cursor.close()
             db.close()
@@ -146,57 +136,38 @@ class User():
     @classmethod
     def register_user(self, name: str, email: str, password: str, type_user_code: int):
         try:
-
-            invalidations = [is_password_secure(password), is_valid_name(name), is_valid_email(email), email_exists(email)]
-
-            if False in invalidations:
-                return {"message": invalidations}, 400
-            
-            hashed_password = convert_bcrypt(password)
-
             db = get_connection()
             cursor = db.cursor()
-
+            invalidations = [is_password_secure(password), is_valid_name(name), is_valid_email(email), email_exists(email, 0)]
+            if False in invalidations:
+                return {"message": invalidations}, 400
+            hashed_password_hex = convert_bcrypt(password)
             cursor.execute('''
                 SELECT register_user(%s, %s, %s, %s);
-            ''', (name, email, hashed_password, type_user_code))
-
+            ''', (name, email, hashed_password_hex, type_user_code))
             db.commit()
-
             return {"message": "User registered successfully."}, 201
-
         except Exception as ex:
             return {"error": f"Error registering user: {str(ex)}"}, 500
-
         finally:
             cursor.close()
             db.close()
 
     @classmethod
-    def edit_user(self, user_code: int, name: str, email: str, password: str, type_user_code: int):
-        try:
-            
-            invalidations = [is_password_secure(password), is_valid_name(name), is_valid_email(email), email_exists(email)]
-
+    def edit_user(self, user_code: int, name: str, email: str, type_user_code: int):
+        try:            
+            invalidations = [is_valid_name(name), is_valid_email(email), email_exists(email, user_code)]
             if False in invalidations:
                 return {"errors": invalidations}, 404
-
-            hashed_password = convert_bcrypt(password)
-
             db = get_connection()
             cursor = db.cursor()
-
             cursor.execute('''
-                SELECT update_user(%s, %s, %s, %s, %s);
-            ''', (user_code, name, email, hashed_password, type_user_code))
-
+                SELECT update_user(%s, %s, %s, %s);
+            ''', (user_code, name, email, type_user_code))
             db.commit()
-
             return {"message": "User updated successfully."}, 200
-
         except Exception as ex:
             return {"error": f"Error updating user: {str(ex)}"}, 500
-
         finally:
             cursor.close()
             db.close()

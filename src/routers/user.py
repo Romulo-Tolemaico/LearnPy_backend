@@ -3,16 +3,16 @@ from src.models.user import User
 
 main = Blueprint('users_blueprint', __name__)
 
-@main.route('/login', methods=['POST'])
+@main.route('/login_user', methods=['POST'])
 def login():
     try:
         email = str(request.json['email'])
         password = str(request.json['password'])
-        type = int(request.json['type'])   
+        type = int(request.json['type']) 
         if not email or not password:
             return jsonify({'message': 'user email and password are required'}), 400
         
-        json, response = User.login(user_email_entered=email, password_entered=password, type_entered=type) 
+        json, response = User.login(email, password, type) 
         return jsonify(json), response
     except Exception as ex:
         return jsonify({'message': str(ex)}), 500
@@ -51,7 +51,6 @@ def delete_users():
         if not codes:
             return jsonify({'message': 'At least one code is required'}), 400
         codes = list(map(int, codes))
-        
         users, resp = User.delete_users(codes)
         return jsonify(users), resp
     except Exception as ex:
@@ -60,11 +59,10 @@ def delete_users():
 @main.route('/register_user', methods=['POST'])
 def register_user():
     try:
-        name = str(request.json['name'])
+        name = str(request.json['name']).title()
         email = str(request.json['email'])
         password = str(request.json['password'])
         type = int(request.json['type'])
-        
         user, resp = User.register_user(name, email, password, type)
         return jsonify(user), resp
     except Exception as ex:
@@ -74,12 +72,10 @@ def register_user():
 def edit_user():
     try:
         code = int(request.json['code'])  
-        name = str(request.json['name']) 
+        name = str(request.json['name']).title() 
         email = str(request.json['email']) 
-        password = str(request.json['password'])
-        type = int(request.json['type']) 
-        
-        user, resp = User.edit_user(code, name, email, password, type)
+        type = int(request.json['type'])
+        user, resp = User.edit_user(code, name, email, type)
         return jsonify(user), resp
     except Exception as ex:
         return jsonify({'message': str(ex)}), 500

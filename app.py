@@ -1,5 +1,5 @@
 from flask import Flask
-from flask_cors import CORS  # Importa CORS
+from flask_cors import CORS
 from src.routers import user
 
 app = Flask(__name__)
@@ -12,7 +12,6 @@ CORS(app, resources={
     }
 })
 
-# Registra los blueprints (rutas)
 app.register_blueprint(user.main, url_prefix='/user')
 
 if __name__ == "__main__":
